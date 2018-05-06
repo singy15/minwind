@@ -1,0 +1,2 @@
+# minwind
+Minimal application launcher
