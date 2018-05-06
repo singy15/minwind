@@ -29,7 +29,7 @@ app.on('ready', () => {
   // Load and apply config.
   loadConfig();
 
-  var tray = new Tray("./icon.png");
+  var tray = new Tray(__dirname + "/icon.ico");
   tray.setContextMenu(
     Menu.buildFromTemplate([
         { label: "Exit", click: function () { exitApp(); } }
