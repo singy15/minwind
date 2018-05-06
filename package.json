@@ -1,0 +1,17 @@
+{
+  "name": "minwind",
+  "version": "0.0.1",
+  "description": "Minimal application launcher.",
+  "main": "minwind.js",
+  "dependencies": {
+    "electron": "2.0.0",
+    "electron-config": "1.0.0",
+    "jquery": "3.3.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "author": "kedama",
+  "license": "MIT"
+}

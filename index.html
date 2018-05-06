@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>minwind</title>
+  </head>
+  <body>
+    <input type="text" id="tbCmd" style="width:565px;height:20px;"/>
+  </body>
+  <script>
+    var electron = require('electron');
+    var minwind = electron.remote.require('./minwind');
+    window.jQuery = window.$ = require('jquery');
+
+    var tbCmd = $("#tbCmd");
+
+    function refocus() {
+      tbCmd.focus();
+    }
+
+    $(document).ready(function() {
+      refocus();
+
+      tbCmd.blur(refocus);
+
+      tbCmd.keyup(function(e) {
+        switch (e.which){
+          case 13: //Enter
+            minwind.procInput(tbCmd.val());
+            tbCmd.val("");
+            minwind.hideWindow();
+            break;
+          case 27: //Esc
+            minwind.hideWindow();
+            break;
+        }
+      });
+    });
+  </script>
+</html>
+
