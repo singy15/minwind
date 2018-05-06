@@ -170,7 +170,9 @@ function startProc(cmdStr) {
     cmd = cnf;
   }
 
-  exec("start " + cmd, (err, stdout, stderr) => {
+  console.log(cmd);
+
+  exec(cmd, (err, stdout, stderr) => {
     if (err) { 
       console.log(err); 
     }
