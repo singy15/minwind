@@ -24,13 +24,9 @@ npm install -g asar
 npm install -g electron-packager
 ```
 
-### 2.Archiving with asar
+### 2.Archiving and packaging with electron-packager
 ```
-asar pack ./minwind ./minwind.asar
-```
-### 3.Packaging with electron-packager
-```
-electron-packager ./minwind minwind --platform=win32 --arch=x64 --electronVersion=2.0.0
-electron-packager ./minwind minwind --platform=win32 --arch=ia32 --electronVersion=2.0.0
+electron-packager . minwind --platform=win32 --arch=x64 --electronVersion=2.0.0 --icon=./icon.ico --asar
+electron-packager . minwind --platform=win32 --arch=ia32 --electronVersion=2.0.0 --icon=./icon.ico --asar
 ```
 
