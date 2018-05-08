@@ -8,20 +8,25 @@ let wnd = null;
 app.on('ready', () => {
   // Create window.
   wnd = new BrowserWindow({
-    width: 585, 
-    height: 43,
+    // useContentSize: true,
+    width: 600, 
+    height: 90,
     show: false,
     minimizable: false,
     maximizable: false,
     alwaysOnTop: true,
-    frame: false,
-    transparent: true
+    // frame: false,
+    // transparent: true
   });
 
   // Load html.
   wnd.loadURL('file://' + __dirname + '/index.html');
 
   wnd.setMenu(null);
+
+  wnd.on('closed', function() {
+    exitApp();
+  });
 
   // DEBUG:
   // wnd.webContents.openDevTools();
@@ -146,6 +151,9 @@ function execCmd(compiled) {
     case "clear":
       clearConfig();
       break;
+    // case "edit-config":
+    //   editConfig();
+    //   break;
     case "exit":
       exitApp();
       break;
@@ -156,13 +164,23 @@ function procInput(str) {
   if(isCmd(str)) {
     execCmd(parseCmd(str));
   } else {
-    startProc(str);
+    execUserCmd(str);
   }
 }
 
-function startProc(cmdStr) {
-  console.log("command [" + cmdStr + "]");
+function startProc(cmd) {
   const exec = require('child_process').exec;
+  exec(cmd, (err, stdout, stderr) => {
+    if (err) { 
+      console.log(err); 
+    }
+    console.log(stdout);
+  });
+}
+
+function execUserCmd(cmdStr) {
+  console.log("command [" + cmdStr + "]");
+  // const exec = require('child_process').exec;
 
   var cmd = cmdStr;
   var cnf = config.get("user." + cmdStr);
@@ -172,16 +190,21 @@ function startProc(cmdStr) {
 
   console.log(cmd);
 
-  exec(cmd, (err, stdout, stderr) => {
-    if (err) { 
-      console.log(err); 
-    }
-    console.log(stdout);
-  });
+  // exec(cmd, (err, stdout, stderr) => {
+  //   if (err) { 
+  //     console.log(err); 
+  //   }
+  //   console.log(stdout);
+  // });
+  startProc(cmd);
 }
 
 function clearConfig() {
   config.delete('user');
+}
+
+function editConfig() {
+  config.openInEditor();
 }
 
 function exitApp() {
@@ -200,7 +223,7 @@ exports.getUserConfig = getUserConfig;
 
 exports.hideWindow = hideWindow;
 
-exports.startProc = startProc;
+exports.execUserCmd = execUserCmd;
 
 exports.clearConfig = clearConfig;
 
