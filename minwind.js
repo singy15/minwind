@@ -15,6 +15,7 @@ app.on('ready', () => {
     minimizable: false,
     maximizable: false,
     alwaysOnTop: true,
+    skipTaskbar: true
     // frame: false,
     // transparent: true
   });
