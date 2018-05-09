@@ -2,6 +2,7 @@
 const {app, Menu, Tray, globalShortcut, BrowserWindow} = electron = require('electron')
 const Config = require('electron-config');
 const config = new Config();
+const fs = require('fs');
 
 let wnd = null;
 
@@ -169,9 +170,16 @@ function procInput(str) {
   }
 }
 
+function isDirectory(filepath) {
+  return fs.existsSync(filepath) && fs.statSync(filepath).isDirectory();
+}
+
 function startProc(cmd) {
   const exec = require('child_process').exec;
-  exec(cmd, (err, stdout, stderr) => {
+
+  var cmdStr = (isDirectory(cmd))? "start \"\" \"" + cmd + "\"" : cmd;
+  console.log(cmdStr);
+  exec(cmdStr, (err, stdout, stderr) => {
     if (err) { 
       console.log(err); 
     }
@@ -179,25 +187,13 @@ function startProc(cmd) {
   });
 }
 
-function execUserCmd(cmdStr) {
-  console.log("command [" + cmdStr + "]");
-  // const exec = require('child_process').exec;
-
-  var cmd = cmdStr;
-  var cnf = config.get("user." + cmdStr);
+function execUserCmd(cmd) {
+  var cnf = config.get("user." + cmd);
   if(cnf !== undefined) {
-    cmd = cnf;
+    startProc(cnf);
+  } else {
+    startProc(cmd);
   }
-
-  console.log(cmd);
-
-  // exec(cmd, (err, stdout, stderr) => {
-  //   if (err) { 
-  //     console.log(err); 
-  //   }
-  //   console.log(stdout);
-  // });
-  startProc(cmd);
 }
 
 function clearConfig() {
