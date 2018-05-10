@@ -17,14 +17,14 @@ Register application.
 
 ```
 @set baz=C:\foo\bar\baz.exe
-@set baz="C:\Program Files\foo\bat\baz.exe"
+@set baz=C:\Program Files\foo\bat\baz.exe
 ```
 
 Register directory.
 
 ```
-@set baz=explorer C:\foo\bar\baz
-@set baz=explorer "C:\foo bar\baz"
+@set baz=C:\foo\bar\baz
+@set baz=C:\foo bar\baz
 ```
 
 

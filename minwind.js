@@ -170,6 +170,7 @@ function procInput(str) {
   }
 }
 
+// not used.
 function isDirectory(filepath) {
   return fs.existsSync(filepath) && fs.statSync(filepath).isDirectory();
 }
@@ -177,7 +178,7 @@ function isDirectory(filepath) {
 function startProc(cmd) {
   const exec = require('child_process').exec;
 
-  var cmdStr = (isDirectory(cmd))? "start \"\" \"" + cmd + "\"" : cmd;
+  var cmdStr = "start \"\" \"" + cmd + "\"";
   console.log(cmdStr);
   exec(cmdStr, (err, stdout, stderr) => {
     if (err) { 
