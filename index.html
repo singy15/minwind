@@ -4,14 +4,48 @@
   <head>
     <meta charset="UTF-8">
     <title>minwind</title>
+    <link rel="stylesheet" href="./lib/jquery-ui-1.12.1.custom/jquery-ui.min.css">
+    <link rel="stylesheet" href="./css/style.css">
   </head>
+  <style>
+    .ui-autocomplete {
+        max-height: 120px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 20px;
+    }
+    input {
+      font-size : 0.7em;
+      /*background-color : #000;*/
+      /*color : #fff;*/
+    }
+    body {
+      background-color: rgba(24, 24, 24, .0);
+      color: #fff;
+      margin : 0px;
+      padding : 0px;
+      -webkit-user-select: none;
+    }
+    img {
+      -webkit-app-region: drag;
+    }
+  </style>
   <body>
-    <input type="text" id="tbCmd" style="width:565px;height:20px;"/>
+    <table>
+      <tr>
+        <td><input type="text" id="tbCmd" style="width:530px;height:12px;"/></td>
+        <td><img border="0" src="./icon.png" width="16" height="16" alt="img" style="vertical-align:middle"></td>
+      </tr>
+    </table>
   </body>
+  <script src="./lib/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
+  <script>window.$ = window.jQuery = require('jquery');</script>
+  <script src="./lib/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+  <script src="./lib/underscore.js"></script>
   <script>
     var electron = require('electron');
     var minwind = electron.remote.require('./minwind');
-    window.jQuery = window.$ = require('jquery');
+    // window.jQuery = window.$ = require('jquery');
 
     var tbCmd = $("#tbCmd");
 
@@ -19,8 +53,15 @@
       tbCmd.focus();
     }
 
+    function resetCandidate(candidate) {
+      tbCmd.autocomplete({
+        source : candidate
+      });
+    }
+
     $(document).ready(function() {
       refocus();
+      resetCandidate();
 
       tbCmd.blur(refocus);
 
@@ -29,10 +70,23 @@
           case 13: //Enter
             minwind.procInput(tbCmd.val());
             tbCmd.val("");
+            resetCandidate(minwind.getRecent());
             minwind.hideWindow();
             break;
           case 27: //Esc
+            tbCmd.val("");
+            resetCandidate(minwind.getRecent());
             minwind.hideWindow();
+            break;
+          default:
+            if(minwind.isDirectory(tbCmd.val())) {
+              minwind.getDirectoryLs(tbCmd.val(), function(path, err, files) {
+                console.log(_.map(files, function(e) { return path + e;}));
+                resetCandidate(_.map(files, function(e) { return path + e;}));
+              });
+            } else {
+              resetCandidate(minwind.getRecent());
+            }
             break;
         }
       });

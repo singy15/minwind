@@ -3,6 +3,8 @@ const {app, Menu, Tray, globalShortcut, BrowserWindow} = electron = require('ele
 const Config = require('electron-config');
 const config = new Config();
 const fs = require('fs');
+var __ = require('underscore');
+typeof __.each === 'function'
 
 let wnd = null;
 
@@ -11,14 +13,15 @@ app.on('ready', () => {
   wnd = new BrowserWindow({
     // useContentSize: true,
     width: 600, 
-    height: 90,
+    height: 200,
     show: false,
     minimizable: false,
     maximizable: false,
     alwaysOnTop: true,
-    skipTaskbar: true
-    // frame: false,
-    // transparent: true
+    skipTaskbar: true,
+    frame: false,
+    transparent: true,
+    resizable : false
   });
 
   // Load html.
@@ -31,7 +34,7 @@ app.on('ready', () => {
   });
 
   // DEBUG:
-  // wnd.webContents.openDevTools();
+  //wnd.webContents.openDevTools();
 
   // Load and apply config.
   loadConfig();
@@ -66,6 +69,12 @@ function setConfigDefault() {
   }
   if(getSystemConfig("opacity") === undefined) {
     setSystemConfig("opacity", "1.0");
+  }
+  if(getSystemConfig("recent") === undefined) {
+    setSystemConfig("recent", JSON.stringify([]));
+  }
+  if(getSystemConfig("historyMax") === undefined) {
+    setSystemConfig("historyMax", "10");
   }
 }
 
@@ -167,11 +176,14 @@ function procInput(str) {
     execCmd(parseCmd(str));
   } else {
     execUserCmd(str);
+    addRecent(str);
   }
 }
 
-// not used.
 function isDirectory(filepath) {
+  if(filepath.substr(-1) !== "\\") {
+    return false;
+  }
   return fs.existsSync(filepath) && fs.statSync(filepath).isDirectory();
 }
 
@@ -209,7 +221,36 @@ function exitApp() {
   app.quit();
 }
 
+function addRecent(recent) {
+  var recents = JSON.parse(getSystemConfig("recent"));
+  if(!(__.contains(recents, recent))) {
+    recents.unshift(recent);
+  }
+  if(recents.length > getSystemConfig("historyMax")) {
+    recents = recents.slice(0,getSystemConfig("historyMax"));
+  }
+  setSystemConfig("recent", JSON.stringify(recents));
+}
+
+function getRecent() {
+  return JSON.parse(getSystemConfig("recent"));
+}
+
+function getDirectoryLs(path, after) {
+  fs.readdir(path, function(err, files){
+    if(after) {
+      after(path,err,files);
+    }
+    if (err) throw err;
+    console.log(files);
+  });
+
+  return ls;
+}
+
 exports.procInput = procInput;
+
+exports.isDirectory = isDirectory;
 
 exports.setSystemConfig = setSystemConfig;
 
@@ -226,4 +267,10 @@ exports.execUserCmd = execUserCmd;
 exports.clearConfig = clearConfig;
 
 exports.exitApp = exitApp;
+
+exports.addRecent = addRecent;
+
+exports.getRecent = getRecent;
+
+exports.getDirectoryLs = getDirectoryLs;
 
